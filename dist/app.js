@@ -9,15 +9,61 @@ app.use(function (req, res, next) {
     console.log("this is middle");
     next();
 });
-app.get("/", function (req, res) {
-    console.log(req);
-    res.send({ cats: appModel_1.Cat });
+app.use(express.json());
+app.get("/cats", function (req, res) {
+    try {
+        var cats = appModel_1.Cat;
+        res.send({
+            success: true,
+            data: {
+                cats: cats,
+            },
+        });
+    }
+    catch (error) {
+        res.send({
+            success: false,
+            error: error.message,
+        });
+    }
 });
-app.get("/cats/blue", function (req, res, next) {
-    res.send({ blue: appModel_1.Cat[0] });
+app.get("/cats/:id", function (req, res) {
+    try {
+        var params_1 = req.params;
+        console.log(params_1);
+        var cat = appModel_1.Cat.find(function (cat) {
+            return cat.id === params_1.id;
+        });
+        res.send({
+            success: true,
+            data: {
+                cat: cat,
+            },
+        });
+    }
+    catch (error) {
+        res.send({
+            success: false,
+            error: error.message,
+        });
+    }
 });
-app.get("/cats/som", function (req, res) {
-    res.send({ som: appModel_1.Cat[1] });
+app.post("/cats", function (req, res) {
+    try {
+        var data = req.body;
+        console.log(data);
+        appModel_1.Cat.push(data);
+        res.status(200).send({
+            succes: true,
+            data: { data: data },
+        });
+    }
+    catch (error) {
+        res.send({
+            success: false,
+            error: error.message,
+        });
+    }
 });
 app.use(function (req, res, next) {
     console.log("error");
